@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NB Test Markazi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: #2c3e50;
+            /* O'zingizning rasmingiz nomini 'orqa-fon-rasmi.jpg' o'rniga yozing */
+            background-image: linear-gradient(rgba(30, 41, 59, 0.85), rgba(30, 41, 59, 0.85)), url('orqa-fon-rasmi.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        header {
+            text-align: center;
+            padding: 50px 20px;
+            color: #fff;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto 80px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 16px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+            min-height: 500px;
+        }
+
+        .page { display: none; }
+        .active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: #1e293b;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; }
+
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover { transform: translateY(-2px); }
+
+        .topic-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .topic-item {
+            background: #f8fafc;
+            padding: 15px 20px;
+            border-left: 6px solid #3b82f6;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            transition: 0.2s;
+        }
+
+        .topic-item:hover {
+            background: #eff6ff;
+            transform: translateX(8px);
+            border-left-color: #10b981;
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        #timer {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ef4444;
+            background: #fee2e2;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .question-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .options-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+
+        .option-label {
+            background: white;
+            padding: 10px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-label input { margin-right: 12px; }
+
+        /* Sertifikat Stil */
+        #certificate-area {
+            width: 100%;
+            max-width: 650px;
+            height: 450px;
+            margin: 25px auto;
+            background: #fff;
+            border: 15px double #d4af37;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .cert-inner {
+            border: 3px solid #d4af37;
+            height: 100%;
+            text-align: center;
+            padding: 30px;
+            background: radial-gradient(circle, #fffff5 0%, #fff 100%);
+        }
+
+        .cert-main-title { font-family: 'Georgia', serif; font-size: 2.5rem; color: #aa7c11; margin: 15px 0; }
+        .cert-user { font-size: 1.8rem; color: #1e293b; margin: 10px 0; font-weight: 700; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>NB testga hush kelibsz</h1>
+    </header>
+
+    <div class="container">
+        
+        <div id="page-login" class="page active">
+            <h2>Tizimga kirish / Ro'yxatdan o'tish</h2>
+            <form onsubmit="loginUser(event)">
+                <div class="form-group">
+                    <label>Ism va Familiyangiz:</label>
+                    <input type="text" id="fullname" placeholder="Ism Familiya" required>
+                </div>
+                <div class="form-group">
+                    <label>Email manzilingiz:</label>
+                    <input type="email" id="email" placeholder="mail@example.com" required>
+                </div>
+                <button type="submit">Ro'yxatdan o'tish</button>
+            </form>
+        </div>
+
+        <div id="page-topics" class="page">
+            <h2>Xush kelibsiz, <span id="user-title" style="color: #2563eb;"></span>! Mavzuni tanlang:</h2>
+            <div class="topic-list" id="topics-box"></div>
+        </div>
+
+        <div id="page-quiz" class="page">
+            <div class="test-header">
+                <h3 id="quiz-topic-title" style="margin:0;">Mavzu</h3>
+                <div id="timer">Vaqt: 15:00</div>
+            </div>
+            <form onsubmit="submitQuiz(event)" id="quiz-form">
+                <div id="quiz-questions"></div>
+                <button type="submit">Testni yakunlash</button>
+            </form>
+        </div>
+
+        <div id="page-result" class="page">
+            <h2>Sizning natijangiz</h2>
+            <p id="result-status" style="font-size: 1.2rem; font-weight: 600;"></p>
+            
+            <div id="certificate-area">
+                <div class="cert-inner">
+                    <div style="font-size: 1.2rem; font-weight: 800;">NB TEST MARKAZI</div>
+                    <div class="cert-main-title">SERTIFIKAT</div>
+                    <p>Ushbu hujjat matematika fanidan yuqori natija ko'rsatgan o'quvchiga topshiriladi:</p>
+                    <div class="cert-user" id="cert-holder">F.I.O</div>
+                    <p>Mavzu: <strong id="cert-topic">Mavzu</strong></p>
+                    <p>Natija: <strong id="cert-score">0%</strong></p>
+                    <p style="margin-top: 40px; font-size: 0.8rem; color: #64748b;">Sana: 2026-06-08 | ID: #NB-7741</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="downloadCertificate()" id="download-btn">Sertifikatni yuklab olish (PNG)</button>
+                <button onclick="showPage('page-topics')" style="background: #10b981; margin-left: 10px;">Boshqa mavzu</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let user = { name: "" };
+        let activeTopic = "";
+        let countdown;
+        let totalSeconds = 900; // 15 daqiqa
+
+        // 15 ta mavzu va ularning ichida 10 tadan haqiqiy savollar bazasi (Jami 150 ta savol)
+        const testlarBazasi = {
+            "Sonlar va amallar": [
+                { q: "12 va 18 sonlarining EKUKini toping.", a: "36", b: "54", c: "72", r: "a" },
+                { q: "Hisoblang: -15 + (-7) * (-2)", a: "-1", b: "-29", c: "1", r: "a" },
+                { q: "Eng kichik ikki xonali tub sonni toping.", a: "11", b: "13", c: "10", r: "a" },
+                { q: "347 sonini 9 ga bo'lgandagi qoldiqni toping.", a: "5", b: "4", c: "2", r: "a" },
+                { q: "Hisoblang: 240 : 4 - 4 * 12", a: "12", b: "20", c: "16", r: "a" },
+                { q: "Ketma-ket kelgan uchta butun sonning yig'indisi 42 ga teng. Shu sonlarning kichigini toping.", a: "13", b: "14", c: "12", r: "a" },
+                { q: "84 sonining natural bo'luvchilari nechta?", a: "12", b: "10", c: "8", r: "a" },
+                { q: "Hisoblang: |-12| + |5| - |-8|", a: "9", b: "25", c: "15", r: "a" },
+                { q: "Qaysi juftlik o'zaro tub sonlardan iborat?", a: "(9; 14)", b: "(6; 15)", c: "(12; 18)", r: "a" },
+                { q: "Dastlabki 5 ta tub sonning yig'indisini toping.", a: "28", b: "26", c: "18", r: "a" }
+            ],
+            "Kasrlar": [
+                { q: "0.4(6) davriy kasrni oddiy kasrga aylantiring.", a: "7/15", b: "46/99", c: "23/50", r: "a" },
+                { q: "3/4 qismi 60 ga teng bo'lgan sonni toping.", a: "80", b: "45", c: "90", r: "a" },
+                { q: "Hisoblang: 1/2 + 1/3 + 1/6", a: "1", b: "5/6", c: "7/6", r: "a" },
+                { q: "Qaysi kasr eng katta? 2/3, 3/4, 5/6", a: "5/6", b: "3/4", c: "2/3", r: "a" },
+                { q: "2.5 soniga teskari bo'lgan sonni toping.", a: "0.4", b: "-2.5", c: "4", r: "a" },
+                { q: "Hisoblang: 4.25 - 2.5 * 1.2", a: "1.25", b: "2.15", c: "1.75", r: "a" },
+                { q: "Kasrni qisqartiring: 48/72", a: "2/3", b: "3/4", c: "4/5", r: "a" },
+                { q: "Noma'lum sonni toping: x - 1/3 = 1/2", a: "5/6", b: "1/6", c: "2/5", r: "a" },
+                { q: "Hisoblang: (1/3) : (2/9)", a: "1.5", b: "2/27", c: "3", r: "a" },
+                { q: "0.125 soni oddiy kasrda nimaga teng?", a: "1/8", b: "1/4", c: "1/5", r: "a" }
+            ],
+            "Foiz": [
+                { q: "240 sonining 15% ini toping.", a: "36", b: "24", c: "40", r: "a" },
+                { q: "Narxi 50000 so'm bo'lgan buyum 20% chegirma bilan necha so'm bo'ladi?", a: "40000", b: "45000", c: "38000", r: "a" },
+                { q: "40 soni 200 ning necha foizini tashkil qiladi?", a: "20%", b: "15%", c: "25%", r: "a" },
+                { q: "Sonning 40% i 48 ga teng bo'lsa, shu sonning o'zini toping.", a: "120", b: "100", c: "140", r: "a" },
+                { q: "Sinfdagi 25 ta o'quvchidan 12 tasi qizlar. Qizlar sinfning necha foizini tashkil etadi?", a: "48%", b: "50%", c: "44%", r: "a" },
+                { q: "Go'sht pishirilganda o'z vaznining 30% ini yo'qotadi. 5 kg go'shtdan qancha pishgan go'sht olinadi?", a: "3.5 kg", b: "4 kg", c: "3 kg", r: "a" },
+                { q: "Jamg'armaga yiliga 10% foyda to'lanadi. 200 000 so'm bir yildan keyin qancha bo'ladi?", a: "220 000", b: "210 000", c: "240 000", r: "a" },
+                { q: "0.035 sonini foizda ifodalang.", a: "3.5%", b: "35%", c: "0.35%", r: "a" },
+                { q: "To'g'ri to'rtburchakning bo'yi 10% ga oshirilsa, yuzi necha foizga oshadi?", a: "10%", b: "20%", c: "11%", r: "a" },
+                { q: "A soni B sonidan 25% ga ko'p. B soni A dan necha foizga kam?", a: "20%", b: "25%", c: "15%", r: "a" }
+            ],
+            "Daraja va ildizlar": [
+                { q: "Hisoblang: (-3)^4 - 2^5", a: "49", b: "19", c: "53", r: "a" },
+                { q: "√(144) - √(49) qiymatini toping.", a: "5", b: "7", c: "6", r: "a" },
+                { q: "Soddalashtiring: (x^3)^4 * x^2", a: "x^14", b: "x^9", c: "x^24", r: "a" },
+                { q: "81^(1/4) nimaga teng?", a: "3", b: "9", c: "27", r: "a" },
+                { q: "√(32) / √(2) ifodani hisoblang.", a: "4", b: "8", c: "2", r: "a" },
+                { q: "Hisoblang: 5^(-2)", a: "1/25", b: "-25", c: "0.2", r: "a" },
+                { q: "√(3^2 + 4^2) ifoda nimaga teng?", a: "5", b: "7", c: "25", r: "a" },
+                { q: "Ildizdan chiqaring: √(0.04)", a: "0.2", b: "0.02", c: "2", r: "a" },
+                { q: "Tenglamani yeching: x^2 = 121", a: "±11", b: "11", c: "21", r: "a" },
+                { q: "Soddalashtiring: √(a^2) (a < 0 bo'lganda)", a: "-a", b: "a", c: "|a|", r: "a" }
+            ],
+            "Algebraik ifodalar": [
+                { q: "Soddalashtiring: 3(x - 2y) - 2(2x - 3y)", a: "-x", b: "x - 12y", c: "-x - 12y", r: "a" },
+                { q: "x = -2 va y = 3 bo'lsa, 2x^2 - 3y ifodaning qiymatini toping.", a: "-1", b: "-17", c: "11", r: "a" },
+                { q: "Ko'paytuvchilarga ajrating: ax - bx + ay - by", a: "(a - b)(x + y)", b: "(a + b)(x - y)", c: "(a - b)(x - y)", r: "a" },
+                { q: "Kasrni qisqartiring: (6ab) / (9b^2)", a: "2a / 3b", b: "3a / 2b", c: "2ab / 3", r: "a" },
+                { q: "Ifodani ayiring: (x+y)/2 - (x-y)/2", a: "y", b: "x", c: "0", r: "a" },
+                { q: "Soddalashtiring: m - (n - (m + n))", a: "2m", b: "0", c: "2m - 2n", r: "a" },
+                { q: "x + y = 7 bo'lsa, 2x + 2y - 5 ning qiymati nechaga teng?", a: "9", b: "14", c: "12", r: "a" },
+                { q: "Ko'phad shakliga keltiring: 2a(a^2 - 3)", a: "2a^3 - 6a", b: "2a^2 - 6a", c: "2a^3 - 3", r: "a" },
+                { q: "a = 0.5 bo'lganda 4/a ifodaning qiymati nechaga teng?", a: "8", b: "2", c: "4", r: "a" },
+                { q: "Soddalashtiring: 5x^2 * 2x^3", a: "10x^5", b: "10x^6", c: "7x^5", r: "a" }
+            ],
+            "Qisqa ko‘paytirish formulalari": [
+                { q: "(x + 4)^2 ifodani oching.", a: "x^2 + 8x + 16", b: "x^2 + 16", c: "x^2 + 4x + 16", r: "a" },
+                { q: "Ko'paytuvchilarga ajrating: m^2 - 25", a: "(m - 5)(m + 5)", b: "(m - 25)(m + 25)", c: "(m - 5)^2", r: "a" },
+                { q: "Hisoblang: 51^2 - 49^2", a: "200", b: "100", c: "400", r: "a" },
+                { q: "(2a - b)^2 ifoda nimaga teng?", a: "4a^2 - 4ab + b^2", b: "4a^2 - b^2", c: "2a^2 - 4ab + b^2", r: "a" },
+                { q: "Soddalashtiring: (a-b)(a+b) + b^2", a: "a^2", b: "a^2 - 2b^2", c: "a^2 + 2b^2", r: "a" },
+                { q: "a + b = 5 va ab = 6 bo'lsa, a^2 + b^2 ni toping.", a: "13", b: "25", c: "19", r: "a" },
+                { q: "Ko'paytuvchilarga ajrating: x^3 - 8", a: "(x-2)(x^2+2x+4)", b: "(x-2)(x^2-2x+4)", c: "(x-2)^3", r: "a" },
+                { q: "(x - 1)(x^2 + x + 1) ifoda nimaga teng?", a: "x^3 - 1", b: "x^3 + 1", c: "(x - 1)^3", r: "a" },
+                { q: "Soddalashtiring: (x+3)^2 - 6x", a: "x^2 + 9", b: "x^2 - 6x + 9", c: "x^2 + 12x + 9", r: "a" },
+                { q: "m^2 + 6m + 9 ifoda nimaning kvadrati?", a: "(m + 3)^2", b: "(m - 3)^2", c: "(m + 9)^2", r: "a" }
+            ],
+            "Tenglamalar": [
+                { q: "Tenglamani yeching: 3x - 5 = 10", a: "5", b: "3", c: "4", r: "a" },
+                { q: "Kvadrat tenglamaning ildizlarini toping: x^2 - 5x + 6 = 0", a: "2; 3", b: "1; 6", c: "-2; -3", r: "a" },
+                { q: "Yeching: 2(x - 3) = 8", a: "7", b: "4", c: "5", r: "a" },
+                { q: "Tenglama ildizini toping: x/4 + 2 = 5", a: "12", b: "8", c: "16", r: "a" },
+                { q: "x^2 - 9 = 0 tenglamaning musbat ildizini toping.", a: "3", b: "9", c: "0", r: "a" },
+                { q: "Tenglamani yeching: 5x = 2x + 9", a: "3", b: "4", c: "2", r: "a" },
+                { q: "Ildizini toping: |x| = 7", a: "±7", b: "7", c: "-7", r: "a" },
+                { q: "Yeching: 0.5x = 10", a: "20", b: "5", c: "15", r: "a" },
+                { q: "x^2 + 4x = 0 tenglamaning barcha ildizlarini ko'rsating.", a: "0; -4", b: "0; 4", c: "-4", r: "a" },
+                { q: "Viyet teoremasiga ko'ra x^2 - 7x + 12 = 0 tenglamaning ildizlari yig'indisi nechaga teng?", a: "7", b: "12", c: "-7", r: "a" }
+            ],
+            "Tengsizliklar": [
+                { q: "Tengsizlikni yeching: 2x > 8", a: "x > 4", b: "x < 4", c: "x > 2", r: "a" },
+                { q: "Yeching: -3x ≤ 9", a: "x ≥ -3", b: "x ≤ -3", c: "x ≥ 3", r: "a" },
+                { q: "Tengsizlikning eng kichik butun yechimini toping: x - 4 > 2", a: "7", b: "6", c: "5", r: "a" },
+                { q: "Yeching: 5x - 3 < 2x + 6", a: "x < 3", b: "x > 3", c: "x < 1", r: "a" },
+                { q: "Tengsizlikning yechimlar oralig'ini toping: x^2 - 4 ≤ 0", a: "[-2; 2]", b: "(-∞; -2]", c: "[2; +∞)", r: "a" },
+                { q: "Yeching: x/3 ≥ -1", a: "x ≥ -3", b: "x ≤ -3", c: "x ≥ -1/3", r: "a" },
+                { q: "Qaysi son 2x + 5 < 9 tengsizlikning yechimi bo'la oladi?", a: "1", b: "2", c: "3", r: "a" },
+                { q: "Yeching: |x| < 3", a: "(-3; 3)", b: "[-3; 3]", c: "(0; 3)", r: "a" },
+                { q: "Tengsizlikni yeching: 1 - x > 0", a: "x < 1", b: "x > 1", c: "x < -1", r: "a" },
+                { q: "Qaysi oraliq x ≥ 5 shartga mos keladi?", a: "[5; +∞)", b: "(5; +∞)", c: "(-∞; 5]", r: "a" }
+            ],
+            "Tenglamalar sistemasi": [
+                { q: "Sistemani yeching va x+y ni toping: {x+y=6, x-y=2}", a: "6", b: "4", c: "8", r: "a" },
+                { q: "Agar {2x+y=10, y=2} bo'lsa, x ni toping.", a: "4", b: "3", c: "5", r: "a" },
+                { q: "Sistema yechimidan iborat x*y ko'paytmani toping: {x+y=5, x-y=1}", a: "6", b: "4", c: "5", r: "a" },
+                { q: "Sistemani yeching: {3x=9, x+y=5}", a: "y=2", b: "y=3", c: "y=1", r: "a" },
+                { q: "Agar {x+2y=8, x=2} bo'lsa, y nechaga teng?", a: "3", b: "4", c: "2", r: "a" },
+                { q: "Sistemani yeching: {x-y=4, x+y=10}", a: "(7; 3)", b: "6; 4", c: "8; 2", r: "a" },
+                { q: "Agar {4x-y=7, y=1} bo'lsa, x ni toping.", a: "2", b: "1", c: "3", r: "a" },
+                { q: "Sistemani qo'shish usuli bilan yeching: {x+y=3, 2x-y=6}", a: "(3; 0)", b: "(2; 1)", c: "(1; 2)", r: "a" },
+                { q: "Agar {x+y=0, x-y=4} bo'lsa, x^2 ni toping.", a: "4", b: "2", c: "16", r: "a" },
+                { q: "Sistemani yeching: {x/2 = 3, y - x = 2}", a: "x=6, y=8", b: "x=6, y=4", c: "x=3, y=5", r: "a" }
+            ],
+            "Funksiyalar": [
+                { q: "y = 3x - 6 funksiyaning Ox o'qi bilan kesishish nuqtasini toping.", a: "(2; 0)", b: "(0; -6)", c: "(3; 0)", r: "a" },
+                { q: "y = x^2 + 3 funksiya uchun f(-2) qiymatini toping.", a: "7", b: "1", c: "-1", r: "a" },
+                { q: "y = kx + 2 chiziqli funksiya (3; 11) nuqtadan o'tsa, k ni toping.", a: "3", b: "2", c: "4", r: "a" },
+                { q: "y = 4/x funksiyaning aniqlanish sohasini toping.", a: "x ≠ 0", b: "x > 0", c: "Barcha haqiqiy sonlar", r: "a" },
+                { q: "y = -2x + 5 funksiyaning grafigi qaysi choraklardan o'tadi?", a: "I, II, IV", b: "I, III, IV", c: "II, III, IV", r: "a" },
+                { q: "y = x^2 parabolaning uchi qaysi nuqtada joylashgan?", a: "(0; 0)", b: "(1; 1)", c: "(0; 1)", r: "a" },
+                { q: "y = 5 funksiyaning grafigi qanday chiziqdan iborat?", a: "Ox o'qiga parallel to'g'ri chiziq", b: "Oy o'qiga parallel to'g'ri chiziq", c: "Koordinata boshidan o'tuvchi chiziq", r: "a" },
+                { q: "y = √(x-3) funksiyaning aniqlanish sohasini toping.", a: "x ≥ 3", b: "x > 3", c: "x ≥ 0", r: "a" },
+                { q: "Qaysi nuqta y = 2x + 1 funksiya grafigiga tegishli?", a: "(1; 3)", b: "(2; 4)", c: "(0; 0)", r: "a" },
+                { q: "y = 2x funksiyaga teskari funksiyani toping.", a: "y = x/2", b: "y = -2x", c: "y = x - 2", r: "a" }
+            ],
+            "Progressiyalar (arifmetik va geometrik)": [
+                { q: "Arifmetik progressiyada a1 = 5, d = 3 bo'lsa, a4 ni toping.", a: "14", b: "17", c: "11", r: "a" },
+                { q: "Geometrik progressiyada b1 = 2, q = 3 bo'lsa, b3 ni toping.", a: "18", b: "12", c: "6", r: "a" },
+                { q: "Arifmetik progressiyada a1 = 2, a2 = 6 bo'lsa, ayirmani (d) toping.", a: "4", b: "3", c: "2", r: "a" },
+                { q: "Arifmetik progressiyaning dastlabki 5 ta hadining yig'indisini toping, agar a1=1, a5=9 bo'lsa.", a: "25", b: "20", c: "45", r: "a" },
+                { q: "Geometrik progressiyada b1 = 4, b2 = 8 bo'lsa, maxrajni (q) toping.", a: "2", b: "4", c: "0.5", r: "a" },
+                { q: "Arifmetik progressiyada a3 = 10, d = 2 bo'lsa, a1 ni toping.", a: "6", b: "8", c: "4", r: "a" },
+                { q: "Cheksiz kamayuvchi geometrik progressiyada b1 = 3, q = 1/2 bo'lsa, uning yig'indisini toping.", a: "6", b: "4.5", c: "5", r: "a" },
+                { q: "3, 7, 11, ... arifmetik progressiyaning keyingi hadini ko'rsating.", a: "15", b: "14", c: "16", r: "a" },
+                { q: "Geometrik progressiyada b1 = 1, q = -2 bo'lsa, b4 ni toping.", a: "-8", b: "8", c: "-4", r: "a" },
+                { q: "Arifmetik progressiyada a1 = -3, a5 = 5 bo'lsa, a3 hadini toping.", a: "1", b: "2", c: "0", r: "a" }
+            ],
+            "Logarifmlar": [
+                { q: "log2(16) qiymatini toping.", a: "4", b: "3", c: "5", r: "a" },
+                { q: "log3(1) nimaga teng?", a: "0", b: "1", c: "3", r: "a" },
+                { q: "log5(5) ning qiymati nechaga teng?", a: "1", b: "0", c: "5", r: "a" },
+                { q: "Hisoblang: log2(8) + log3(9)", a: "5", b: "6", c: "4", r: "a" },
+                { q: "log10(100) nimaga teng?", a: "2", b: "10", c: "1", r: "a" },
+                { q: "Hisoblang: log2(20) - log2(5)", a: "2", b: "4", c: "15", r: "a" },
+                { q: "log3(x) = 2 bo'lsa, x ni toping.", a: "9", b: "6", c: "8", r: "a" },
+                { q: "lg(0.1) nimaga teng?", a: "-1", b: "0.1", c: "1", r: "a" },
+                { q: "log2(x) = -1 bo'lsa, x ni toping.", a: "0.5", b: "-2", c: "2", r: "a" },
+                { q: "Hisoblang: 5^log5(7)", a: "7", b: "5", c: "35", r: "a" }
+            ],
+            "Ko‘rsatkichli tenglamalar": [
+                { q: "Tenglamani yeching: 2^x = 32", a: "5", b: "4", c: "6", r: "a" },
+                { q: "Yeching: 3^(x-1) = 9", a: "3", b: "2", c: "4", r: "a" },
+                { q: "Tenglamani yeching: 5^(2x) = 25", a: "1", b: "2", c: "0.5", r: "a" },
+                { q: "Yeching: 4^x = 1/2", a: "-0.5", b: "-2", c: "0.5", r: "a" },
+                { q: "Tenglama ildizini toping: 7^(x+2) = 7", a: "-1", b: "1", c: "0", r: "a" },
+                { q: "Yeching: 10^x = 0.01", a: "-2", b: "-1", c: "2", r: "a" },
+                { q: "Tenglamani yeching: 6^x = 1", a: "0", b: "1", c: "6", r: "a" },
+                { q: "Yeching: 2^(x+3) = 4^x", a: "3", b: "2", c: "4", r: "a" },
+                { q: "Tenglamaning ildizini toping: 9^x = 27", a: "1.5", b: "3", c: "2", r: "a" },
+                { q: "Yeching: 0.5^x = 4", a: "-2", b: "2", c: "-0.5", r: "a" }
+            ],
+            "Uchburchaklar": [
+                { q: "To'g'ri burchakli uchburchakning katetlari 6 va 8 sm bo'lsa, gipotenuzasini toping.", a: "10 sm", b: "12 sm", c: "14 sm", r: "a" },
+                { q: "Uchburchakning ikkita ichki burchagi 40° va 70° ga teng. Uchinchi burchakni toping.", a: "70°", b: "60°", c: "80°", r: "a" },
+                { q: "Muntazam uchburchakning bitta tashqi burchagi nechaga teng?", a: "120°", b: "60°", c: "90°", r: "a" },
+                { q: "Tomonlari 5, 5, 6 sm bo'lgan teng yonli uchburchakning perimetrini toping.", a: "16 sm", b: "11 sm", c: "17 sm", r: "a" },
+                { q: "To'g'ri burchakli uchburchakning o'tkir burchaklaridan biri 35° bo'lsa, ikkinchisini toping.", a: "55°", b: "45°", c: "65°", r: "a" },
+                { q: "Muntazam uchburchakning tomoni 4 sm bo'lsa, uning perimetri qancha?", a: "12 sm", b: "16 sm", c: "8 sm", r: "a" },
+                { q: "Uchburchak burchaklari 1:2:3 nisbatda. Eng katta burchakni toping.", a: "90°", b: "60°", c: "120°", r: "a" },
+                { q: "Gipotenuzasi 12 sm bo'lgan to'g'ri burchakli uchburchakda 30° li burchak qarshisidagi katetni toping.", a: "6 sm", b: "4 sm", c: "8 sm", r: "a" },
+                { q: "Tomonlari 3, 4, 5 bo'lgan uchburchakning yuzini toping.", a: "6", b: "12", c: "10", r: "a" },
+                { q: "Uchburchakning asosi 10 sm, balandligi 6 sm bo'lsa, uning yuzini hisoblang.", a: "30 sm²", b: "60 sm²", c: "15 sm²", r: "a" }
+            ],
+            "To‘g‘ri to‘rtburchak, kvadrat kub": [
+                { q: "Tomoni 6 sm bo'lgan kvadratning yuzini toping.", a: "36 sm²", b: "24 sm²", c: "12 sm²", r: "a" },
+                { q: "To'g'ri to'rtburchakning bo'yi 8 sm, eni 5 sm. Uning perimetrini toping.", a: "26 sm", b: "40 sm", c: "13 sm", r: "a" },
+                { q: "Qirrasi 3 sm bo'lgan kubning hajmini (V) toping.", a: "27 sm³", b: "9 sm³", c: "24 sm³", r: "a" },
+                { q: "Perimetri 32 sm bo'lgan kvadratning tomonini toping.", a: "8 sm", b: "4 sm", c: "16 sm", r: "a" },
+                { q: "To'g'ri to'rtburchakning yuzi 48 sm² va bo'yi 8 sm bo'lsa, uning enini toping.", a: "6 sm", b: "8 sm", c: "4 sm", r: "a" },
+                { q: "Kvadratning yuzi 64 sm² bo'lsa, uning perimetrini toping.", a: "32 sm", b: "16 sm", c: "24 sm", r: "a" },
+                { q: "Kubning to'la sirti nechta yog'dan iborat?", a: "6 ta", b: "4 ta", c: "8 ta", r: "a" },
+                { q: "Qirrasi 2 sm bo'lgan kubning to'la sirti yuzini toping.", a: "24 sm²", b: "8 sm²", c: "16 sm²", r: "a" },
+                { q: "To'g'ri to'rtburchakning eni bo'yidan 3 sm qisqa. Bo'yi 7 sm bo'lsa, yuzini toping.", a: "28 sm²", b: "49 sm²", c: "21 sm²", r: "a" },
+                { q: "Kvadrat tomoni 3 marta oshirilsa, uning yuzi necha marta oshadi?", a: "9 marta", b: "3 marta", c: "6 marta", r: "a" }
+            ]
+        };
+
+        const barchaMavzular = Object.keys(testlarBazasi);
+
+        window.onload = function() {
+            const box = document.getElementById('topics-box');
+            barchaMavzular.forEach((mavzu, index) => {
+                box.innerHTML += `<div class="topic-item" onclick="startQuiz('${mavzu}')">${index+1}. ${mavzu}</div>`;
+            });
+        };
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function loginUser(e) {
+            e.preventDefault();
+            user.name = document.getElementById('fullname').value;
+            document.getElementById('user-title').innerText = user.name;
+            showPage('page-topics');
+        }
+
+        function startQuiz(topic) {
+            activeTopic = topic;
+            document.getElementById('quiz-topic-title').innerText = topic;
+            
+            const qContainer = document.getElementById('quiz-questions');
+            qContainer.innerHTML = "";
+
+            const questions = testlarBazasi[topic];
+
+            questions.forEach((item, index) => {
+                qContainer.innerHTML += `
+                    <div class="question-box">
+                        <p><strong>${index + 1}. ${item.q}</strong></p>
+                        <div class="options-group">
+                            <label class="option-label"><input type="radio" name="q${index}" value="a" required> A) ${item.a}</label>
+                            <label class="option-label"><input type="radio" name="q${index}" value="b"> B) ${item.b}</label>
+                            <label class="option-label"><input type="radio" name="q${index}" value="c"> C) ${item.c}</label>
+                        </div>
+                    </div>
+                `;
+            });
+
+            totalSeconds = 900; 
+            clearInterval(countdown);
+            countdown = setInterval(updateTimer, 1000);
+
+            showPage('page-quiz');
+        }
+
+        function updateTimer() {
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            document.getElementById('timer').innerText = `Vaqt: ${minutes}:${seconds}`;
+            
+            if (totalSeconds <= 0) {
+                clearInterval(countdown);
+                alert("Vaqtingiz tugadi!");
+                submitQuiz(new Event('submit'));
+            }
+            totalSeconds--;
+        }
+
+        function submitQuiz(e) {
+            if(e) e.preventDefault();
+            clearInterval(countdown);
+
+            const questions = testlarBazasi[activeTopic];
+            let correctCount = 0;
+
+            questions.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && selected.value === item.r) {
+                    correctCount++;
+                }
+            });
+
+            let percent = Math.round((correctCount / questions.length) * 100);
+            
+            document.getElementById('result-status').innerText = `Siz 10 ta savoldan ${correctCount} tasiga to'g'ri javob berdingiz. Umumiy natija: ${percent}%`;
+            
+            document.getElementById('cert-holder').innerText = user.name;
+            document.getElementById('cert-topic').innerText = activeTopic;
+            document.getElementById('cert-score').innerText = percent + "%";
+
+            if(percent >= 60) {
+                document.getElementById('certificate-area').style.display = "block";
+                document.getElementById('download-btn').style.display = "inline-block";
+            } else {
+                document.getElementById('certificate-area').style.display = "none";
+                document.getElementById('download-btn').style.display = "none";
+                document.getElementById('result-status').innerText += " (Sertifikat olish uchun kamida 60% kerak!)";
+            }
+
+            showPage('page-result');
+        }
+
+        function downloadCertificate() {
+            const area = document.getElementById('certificate-area');
+            html2canvas(area).then(canvas => {
+                let link = document.createElement('a');
+                link.download = user.name + '_Sertifikat.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
